@@ -1,67 +1,65 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>BLACK CAT GIRL 🐈‍⬛</title>
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Poppins:wght@300;500;700&display=swap');
+<meta charset="UTF-8">
+<title>Clipboard Sync</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+body {
+  background:#111;
+  color:#fff;
+  font-family:Arial;
+  padding:20px;
+}
+textarea {
+  width:100%;
+  height:70vh;
+  background:#1e1e1e;
+  color:#fff;
+  border:none;
+  padding:15px;
+  font-size:16px;
+  border-radius:8px;
+}
+</style>
+</head>
+<body>
 
-    :root {
-      --bg1: #050009;
-      --bg2: #150020;
-      --accent: #ff00aa;
-      --secondary: #a970ff;
-      --text: #f8f8f8;
-      --shadow: rgba(255, 0, 170, 0.3);
-    }
+<h3>Clipboard Sync</h3>
+<textarea id="box" placeholder="Paste text here..."></textarea>
 
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: 'Poppins', sans-serif;
-    }
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-    body {
-      background: linear-gradient(180deg, var(--bg1), var(--bg2));
-      color: var(--text);
-      overflow-x: hidden;
-    }
+const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_PROJECT.firebaseapp.com",
+  projectId: "YOUR_PROJECT_ID"
+};
 
-    header {
-      text-align: center;
-      padding: 80px 20px 40px;
-      animation: fadeIn 1.5s ease-in;
-    }
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
-    header h1 {
-      font-family: 'Orbitron', sans-serif;
-      font-size: 3.5rem;
-      color: var(--accent);
-      text-shadow: 0 0 25px var(--accent);
-      letter-spacing: 2px;
-    }
+const room = location.hash.substring(1) || Math.random().toString(36).slice(2);
+location.hash = room;
 
-    header p {
-      font-size: 1.1rem;
-      color: #bbb;
-      margin-top: 10px;
-      font-weight: 400;
-    }
+const ref = doc(db, "rooms", room);
+const box = document.getElementById("box");
 
-    .cat-img {
-      width: 300px;
-      display: block;
-      margin: 40px auto 20px;
-      border-radius: 50%;
-      filter: drop-shadow(0 0 25px var(--accent));
-      transition: transform 0.4s ease;
-    }
+box.oninput = () => {
+  setDoc(ref, { text: box.value });
+};
 
-    .cat-img:hover {
-      transform: scale(1.05);
-    }
+onSnapshot(ref, snap => {
+  if (snap.exists()) {
+    box.value = snap.data().text || "";
+  }
+});
+</script>
+
+</body>
+</html>    }
 
     section {
       padding: 60px 20px;
